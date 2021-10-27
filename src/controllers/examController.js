@@ -1,5 +1,6 @@
-import { examService } from '../services'
+import services from '../services/index.js'
 
+const { examService } = services
 export default class ExamController{
 
 
@@ -8,12 +9,12 @@ export default class ExamController{
 	 * method: POST
 	 * path: /v2/exam	 	 
 	 */ 
-    static create(req, res) {
+    static async create(req, res) {
 
         try {
 
             const { studentId,bookId } = req.body
-            const exam = examService.create({sId:studentId,bId:bookId})
+            const exam = await examService.create({sId:studentId,bId:bookId})
 
             // create response
 			const response = {
@@ -38,10 +39,10 @@ export default class ExamController{
      
         try{
 
-            const { studentId,bookId } = req.query
+            const { studentId,bookId } = req.body
     
             // get exam list
-            const exam = await booksService.findList({studentId,bookId})
+            const exam = await examService.findList({studentId,bookId})
     
             // create response
             const response = {
@@ -65,10 +66,10 @@ export default class ExamController{
     static async update(req, res) {
         
         try {
-            const { id, studentId,bookId } = req.params
-
+            const { id } = req.params
+            const { studentId, bookId } = req.body
             const updateBooks = await examService.updateById(id,{
-                sId:studentId,bId:bookId
+                studentId,bookId
             })
 
             // create response

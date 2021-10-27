@@ -1,5 +1,6 @@
 import express from 'express'
 import logger from 'morgan'
+import routers from './routes/index.js'
 import models from './models/index.js'
 import createLocaleMiddleware from 'express-locale'
 import cors from 'cors'
@@ -12,6 +13,9 @@ app.use(express.urlencoded({ extended: true }))
 // app.use(express.static(__dirname + '/static'))
 app.use(createLocaleMiddleware())
 app.use(cors({ credentials: true }))
+
+// routers
+app.use(routers)
 
 // initialize database
 models.sequelize

@@ -1,19 +1,20 @@
-import {studentService} from '../services'
+import services from '../services/index.js'
 
+const {studentService} = services
 export default class StudentController{
 
 
     /**
 	 * create - student creating
 	 * method: POST
-	 * path: /v2/students	 	 
+	 * path: /v2/student	 	 
 	 */ 
-    static create(req, res) {
+    static async create(req, res) {
 
         try {
 
             const { name } = req.body
-            const student = studentService.create({name})
+            const student = await studentService.create({name})
 
             // create response
 			const response = {
@@ -31,7 +32,7 @@ export default class StudentController{
    /**
 	 * findList - student list
 	 * method: GET
-	 * path: /v2/students	 	 
+	 * path: /v2/student	 	 
 	 */ 
     static async findList(req, res) {
         
@@ -39,7 +40,7 @@ export default class StudentController{
         try{
 
             const { name } = req.query
-    
+            
             // get student list
             const students = await studentService.findList({keyword:name})
     
@@ -60,13 +61,13 @@ export default class StudentController{
     /**
 	 * update - student update
 	 * method: PATCH
-	 * path: /v2/students/:id	 	 
+	 * path: /v2/student/:id	 	 
 	 */ 
     static async update(req, res) {
-        const { language } = req.locale
-
+        
         try {
-            const { id, changeName } = req.params
+            const { id } = req.params
+            const { changeName } = req.body
 
             const updateStudent = await studentService.updateById(id,{
                 name:changeName
@@ -88,15 +89,14 @@ export default class StudentController{
     /**
 	 * delete - student deleting
 	 * method: DELETE
-	 * path: /v2/students/:id	 	 
+	 * path: /v2/student/:id	 	 
 	 */
      static async delete(req, res) {
-		const { language } = req.locale
-
+		
 		try {
 			
 			const { id } = req.params
-
+            console.log('here')
 			
 			// deleting student info
 			await studentService.Deleting(id)
@@ -108,7 +108,7 @@ export default class StudentController{
 
 			res.send(response)
 		} catch (e) {
-			res.send(createErrorResponse(e, language))
+			res.send(e)
 		}
 	}
 }

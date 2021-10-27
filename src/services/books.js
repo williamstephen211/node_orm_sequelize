@@ -2,9 +2,9 @@
 
 
 // import models
-import { Books } from '../models'
+import models from '../models/index.js'
 
-
+const { Books } = models
 // singleton instance
 let instance = null
 
@@ -17,24 +17,24 @@ class BooksService {
     }
 
     // book create
-    async create(studentId) {
+    async create(studentId,title) {
 
-        return await Books.create({sId:studentId})
+        return await Books.create({sId:studentId,title})
     }
 
     // book findlist
-    async findList({studentId,orderBy = 'desc',isDeleted = false}) { // keyword -- name
+    async findList({title,orderBy = 'desc',isDeleted = false}) { // keyword -- name
         // query options 
         let options  = {
             order: [['id',orderBy]],
             where:{
                 isDeleted:isDeleted === 'all' ? undefined : isDeleted,
-                sId: studentId
+                title:{$like:`%${title ? title : ''}%`}
             }
         }
-
+        
         // delete undefined property
-        options.where = JSON.parse(JSON.stringify(options))
+        options.where = JSON.parse(JSON.stringify(options.where))
         
         return await Books.findAndCountAll(options)
     }
@@ -43,11 +43,13 @@ class BooksService {
 		return await Books.findByPk(id)
 	}
 
-    async updateById(id, studentId) {
-		
+    async updateById(id, updateData) {
 
+		const { studentId, title } = updateData
+        const parseData = {sId: studentId ? studentId : undefined, title: title ? title : undefined }
+        const data = JSON.parse(JSON.stringify(parseData))
 		// update book
-		await Books.update({sId:studentId}, {
+		await Books.update(data, {
 			where: { id, isDeleted: false },
 		})
 
@@ -82,7 +84,7 @@ class BooksService {
 		
 
 		// deleting book in books
-		await Books.destroy({where: { sId: id}})
+		await Books.destroy({where: { id }})
 
 	}
 }

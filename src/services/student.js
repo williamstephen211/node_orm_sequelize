@@ -1,11 +1,11 @@
 
-import sequelize from "sequelize";
+
 
 
 // import models
-import {Student, Books, Exam} from '../models'
+import models from '../models/index.js'
 
-
+const { Student, Books, Exam } = models
 // singleton instance
 let instance = null
 
@@ -35,8 +35,8 @@ class StudentService {
         }
 
         // delete undefined property
-        options.where = JSON.parse(JSON.stringify(options))
-        
+        options.where = JSON.parse(JSON.stringify(options.where))
+        console.log(options)
         return await Student.findAndCountAll(options)
     }
 
@@ -90,7 +90,7 @@ class StudentService {
 		
 
 		// user device 삭제
-		await Student.update({isDeleted:true},{ where: { userId: id } })
+		await Student.update({isDeleted:true},{ where: { id } })
 	}
 }
-export default StudentService()
+export default new StudentService()

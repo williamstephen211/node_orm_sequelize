@@ -9,7 +9,10 @@ export default class Student extends Sequelize.Model {
 					type: Sequelize.STRING,
 					allowNull: false,
 				},
-				
+				isDeleted: {
+					type: Sequelize.BOOLEAN,
+					defaultValue: false,
+				},
 				createdAt: {
 					type: Sequelize.DATE,
 					allowNull: false,
@@ -44,6 +47,7 @@ export default class Student extends Sequelize.Model {
 		
 		// delete object.createdAt
 		delete object.updatedAt
+		delete object.isDeleted
 		return object
 	}
 }

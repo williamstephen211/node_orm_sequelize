@@ -1,10 +1,10 @@
 
 
 // import models
-import { Json } from 'sequelize/types/lib/utils'
-import { Exam } from '../models'
 
+import models from '../models/index.js'
 
+const { Exam } = models
 // singleton instance
 let instance = null
 
@@ -23,19 +23,22 @@ class ExamService {
      }
 
     // student findlist
-    async findList({orderBy = 'desc',isDeleted = false,studentId,bookId}) { // sId, bId
+    async findList({orderBy = 'desc', studentId, bookId}) { // sId, bId
         // query options 
+        let cond = []
+        studentId && cond.push({sId: studentId}); bookId && cond.push({bId: bookId}) 
         let options  = {
             order: [['id',orderBy]],
             where:{
-                isDeleted:isDeleted === 'all' ? undefined : isDeleted,
-                $and:[{sId: studentId},{bId: bookId}]
+                
+                // $and:[{sId: studentId},{bId: bookId}]
+                $and:cond
             }
         }
 
         // delete undefined property
-        options.where = JSON.parse(JSON.stringify(options))
-        
+        options.where = JSON.parse(JSON.stringify(options.where))
+        console.log(options)
         return await Exam.findAndCountAll(options)
     }
 
@@ -52,12 +55,12 @@ class ExamService {
         const realInfo = JSON.parse(JSON.stringify(info))
 
 		// update user
-		await Books.update(realInfo, {
-			where: { id, isDeleted: false },
+		await Exam.update(realInfo, {
+			where: { id },
 		})
 
 		const updatedExam = await Exam.findOne({
-			where: { id, isDeleted: false },
+			where: { id },
 			
 		})
 
@@ -81,14 +84,10 @@ class ExamService {
 		// [ERROR] Exam_NOT_FOUND
 		if (book === null) throw Error('Exam_NOT_FOUND')
 
-		// [ERROR] Exam_DELETED
-		if (book.isDeleted) throw Error('Exam_DELETED')
-
 		
-
 		// deleting exam in Exam
-		await Exam.destroy({where: { sId: id}})
+		await Exam.destroy({where: { id }})
 
 	}
 }
-export default ExamService()
+export default new ExamService()

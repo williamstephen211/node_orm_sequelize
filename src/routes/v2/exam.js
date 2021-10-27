@@ -1,9 +1,10 @@
-import { Router } from 'express'
+import * as app from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { examController } from '../../controllers'
-
+import controllers from '../../controllers/index.js'
+const { Router } = app
+const { examController } = controllers
 const router = Router()
 
 // exam creating endpoint
@@ -26,3 +27,4 @@ router.patch('/:id',(req, res) => {
 router.delete('/:id',(req, res) => {
     examController.delete(req, res)
 })
+export default router

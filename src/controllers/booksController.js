@@ -1,5 +1,6 @@
-import {booksService} from '../services'
+import services from '../services/index.js'
 
+const {booksService} = services
 export default class BooksController{
 
 
@@ -12,8 +13,8 @@ export default class BooksController{
 
         try {
 
-            const { studentId } = req.body
-            const book = booksService.create(studentId)
+            const { studentId,title } = req.body
+            const book = booksService.create(studentId,title)
 
             // create response
 			const response = {
@@ -38,10 +39,10 @@ export default class BooksController{
      
         try{
 
-            const { studentId } = req.query
+            const { title } = req.query
     
             // get book list
-            const books = await booksService.findList({studentId})
+            const books = await booksService.findList({title})
     
             // create response
             const response = {
@@ -65,10 +66,10 @@ export default class BooksController{
     static async update(req, res) {
        
         try {
-            const { id, studentId } = req.params
-
+            const { id } = req.params
+            const { studentId, title} = req.body
             const updateBooks = await booksService.updateById(id,{
-                sId:studentId
+                studentId,title
             })
 
             // create response
